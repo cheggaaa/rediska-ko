@@ -24,10 +24,16 @@ class Session_Redis extends Session
      */
     protected $_rediska;
 
-    public function __construct()
-    {
-        parent::__construct();
-        $this->_rediska = Rediska_Manager::get($this->_config['instance']);
+    /**
+     *
+     * @param array $config
+     * @param string $id
+     */
+    public function __construct(array $config = NULL, $id = NULL)
+    {  
+        $instance = Arr::get($config, 'instance', Rediska::DEFAULT_NAME);
+        $this->_rediska = Rediska_Manager::get($instance);
+        parent::__construct($config, $id);
     }
 
     /**

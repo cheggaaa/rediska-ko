@@ -22,8 +22,8 @@ class Cache_Redis extends Cache {
 
         parent::__construct($config);
 
-        $rediskaInstanceName = Arr::get($this->_config, 'instance', Rediska::DEFAULT_NAME);
-        $this->_rediska = Rediska_Manager::get($rediskaInstanceName);
+        $instance = Arr::get($this->_config, 'instance', Rediska::DEFAULT_NAME);
+        $this->_rediska = Rediska_Manager::get($instance);
     }
 
     /**
