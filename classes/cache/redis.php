@@ -2,19 +2,11 @@
 
 class Cache_Redis extends Cache {
 
-    const DEFAULT_NAMESPACE = 'cache::';
-
     /**
      *
      * @var Rediska
      */
     protected $_rediska;
-
-    /**
-     *
-     * @var string
-     */
-    protected $_namespace;
 
     /**
      * Constructs the redis Kohana_Cache object
@@ -30,8 +22,8 @@ class Cache_Redis extends Cache {
 
         parent::__construct($config);
 
-        $this->_namespace = Arr::get($this->_config, 'namespace', self::DEFAULT_NAMESPACE);
-        $this->_rediska = Rediska_Manager::get();
+        $rediskaInstanceName = Arr::get($this->_config, 'instance', Rediska::DEFAULT_NAME);
+        $this->_rediska = Rediska_Manager::get($rediskaInstanceName);
     }
 
     /**
@@ -84,24 +76,16 @@ class Cache_Redis extends Cache {
 
     /**
      * Delete all cache entries.
-     *
-     * Beware of using this method when
-     * using shared memory cache systems, as it will wipe every
-     * entry within the system for all clients.
-     *
-     *     // Delete all cache entries in the default group
-     *     Cache::instance('memcache')->delete_all();
-     *
      * @return  boolean
      */
     public function delete_all() {
-        return $this->_rediska->delete($this->_namespace . '*');
+        return $this->_rediska->flushDb();
     }
 
 
     protected function _getKey($id)
     {
-        return $this->_namespace . $this->_sanitize_id($id);
+        return $this->_sanitize_id($id);
     }
 
 }
