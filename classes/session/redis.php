@@ -34,6 +34,9 @@ class Session_Redis extends Session
         $instance = Arr::get($config, 'instance', Rediska::DEFAULT_NAME);
         $this->_rediska = Rediska_Manager::get($instance);
         parent::__construct($config, $id);
+        if (!$this->_lifetime) {
+            $this->_lifetime = self::DEFAULT_LIFETIME;
+        }
     }
 
     /**
