@@ -1,5 +1,21 @@
 <?php defined('SYSPATH') or die('No direct script access.');
-
+/**
+ * Kohana Redis driver,
+ *
+ * ### Configuration example
+ *
+ * Below is an example of a server configuration.
+ *
+ *     return array(
+ *          'default'   => array(                      // Default group
+ *                      'driver'         => 'redis',   // Using Redis driver
+ *                      'default_expire' => 3600,      // Default expire
+ *                      'instance'       => 'cache'    // Instance name of Rediska (must be created)
+ *           ),
+ *     )
+ *
+ * 
+ */
 class Cache_Redis extends Cache {
 
     /**
