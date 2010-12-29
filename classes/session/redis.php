@@ -1,5 +1,7 @@
-<?php
-
+<?php defined('SYSPATH') or die('No direct script access.');
+/**
+ * Kohana Session driver
+ */
 class Session_Redis extends Session
 {
     /**
