@@ -50,7 +50,7 @@ class Cache_Redis extends Cache {
      * @throws  Kohana_Cache_Exception
      */
     public function get($id, $default = NULL) {
-        $key = $this->_getKey($id);
+        $key = $this->_sanitize_id($id);
         
         if (!$this->_rediska->exists($key)) {
             $value = $default;
@@ -70,7 +70,7 @@ class Cache_Redis extends Cache {
      * @return  boolean
      */
     public function set($id, $data, $lifetime = 3600) {
-        $key = $this->_getKey($id);
+        $key = $this->_sanitize_id($id);
         $this->_rediska->setAndExpire($key, $data, $lifetime);
     }
 
@@ -81,7 +81,7 @@ class Cache_Redis extends Cache {
      * @return  boolean
      */
     public function delete($id, $timeout = 0) {
-        $key = $this->_getKey($id);
+        $key = $this->_sanitize_id($id);
         if ($timeout == 0) {
             $this->_rediska->delete($key);
         } else {
@@ -98,12 +98,5 @@ class Cache_Redis extends Cache {
         return $this->_rediska->flushDb();
     }
 
-
-    protected function _getKey($id)
-    {
-        return $this->_sanitize_id($id);
-    }
-
 }
-
 ?>
