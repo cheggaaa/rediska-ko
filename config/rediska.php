@@ -1,7 +1,6 @@
 <?php
 return array(
     Rediska::DEFAULT_NAME => array (
-        'addtomanager' => true,
         'name'         => Rediska::DEFAULT_NAME,
         'namespace'    => '',
         'servers'      => array(
@@ -16,7 +15,6 @@ return array(
         'redisversion'      => Rediska::STABLE_REDIS_VERSION,
     ),
     'cache'   => array (
-        'addtomanager' => true,
         'name'         => 'cache',
         'namespace'    => 'cache::',
         'servers'      => array(
@@ -31,7 +29,6 @@ return array(
         'redisversion'      => Rediska::STABLE_REDIS_VERSION,
     ),
     'session'  => array (
-        'addtomanager' => true,
         'name'         => 'session',
         'namespace'    => 'session::',
         'servers'      => array(
