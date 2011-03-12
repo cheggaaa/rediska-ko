@@ -3,7 +3,7 @@
     $config = Kohana::config('rediska');
     if (count($config)) {
         foreach ($config as $instanceName => $options) {
-            Rediska_Manager::add(new Rediska($options));
+            Rediska_Manager::add($options);
         }
     }
 ?>
