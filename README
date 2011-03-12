@@ -3,7 +3,7 @@ Rediska (http://rediska.geometria-lab.net) module for Kohana php framework (http
 Attention! There unstable version
 
 1. Installation
-git submodule add git@github.com:cheggaaa/rediska-ko.git modules/rediska
+git submodule add git://github.com/cheggaaa/rediska-ko.git modules/rediska
 if you don't use git - move source to modules/rediska
 
 2. Create config
