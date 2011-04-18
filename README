@@ -3,16 +3,37 @@ Rediska (http://rediska.geometria-lab.net) module for Kohana php framework (http
 Attention! There unstable version
 
 1. Installation
+
 git submodule add git://github.com/cheggaaa/rediska-ko.git modules/rediska
 if you don't use git - move source to modules/rediska
 
 2. Create config
+
+Rediska config:
 - copy modules/rediska/config/rediska.php to application/config/rediska.php
 - change your application/config/rediska.php
 On default config your have 3 instances of Rediska: default, cache, session
 You can add new instance or remove exists. Option list you can see on rediska doc (http://rediska.geometria-lab.net/documentation/get-started/)
 
+Cache config (optional):
+- create group "redis" in config/cache.php
+Example:
+'redis' => array (
+    // rediska instance name, must be exists on rediska config 
+    'instance' => 'cache' 
+)
+
+Session config (optional):
+- create group "redis" in config/session.php
+Example:
+'redis' => array (
+    // rediska instance name, must be exists on rediska config 
+    'instance' => 'session' 
+)
+
+
 3. Using
+
 Get instance
    $rediska = Rediska_Manager::get();
    $resiska = Rediska_Manager::get('my_instance_name');
