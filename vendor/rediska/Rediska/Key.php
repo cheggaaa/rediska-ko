@@ -9,7 +9,7 @@ require_once dirname(__FILE__) . '/../Rediska.php';
  * @author Ivan Shumkov
  * @package Rediska
  * @subpackage Key objects
- * @version @package_version@
+ * @version 0.5.5
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
@@ -228,7 +228,7 @@ class Rediska_Key extends Rediska_Key_Abstract implements Countable, ArrayAccess
  * 
  * @author Ivan Shumkov
  * @package Rediska
- * @version @package_version@
+ * @version 0.5.5
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */

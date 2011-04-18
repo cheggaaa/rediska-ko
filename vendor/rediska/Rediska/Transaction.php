@@ -5,7 +5,7 @@
  * 
  * @author Ivan Shumkov
  * @package Rediska
- * @version @package_version@
+ * @version 0.5.5
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
@@ -120,31 +120,29 @@ class Rediska_Transaction
     {
         $results = array();
 
-        if (!empty($this->_commands)) {
-            $this->_rediska->getProfiler()->start($this);
+        $this->_rediska->getProfiler()->start($this);
 
-            $multi = new Rediska_Connection_Exec($this->_connection, 'MULTI');
-            $multi->execute();
+        $multi = new Rediska_Connection_Exec($this->_connection, 'MULTI');
+        $multi->execute();
 
-            foreach($this->_commands as $command) {
-                $command->execute();
-            }
-
-            $exec = new Rediska_Connection_Exec($this->_connection, 'EXEC');
-            $responses = $exec->execute();
-
-            $this->_rediska->getProfiler()->stop();
-
-            if (!$responses) {
-                throw new Rediska_Transaction_AbortedException('Transaction has been aborted by server');
-            }
-
-            foreach($this->_commands as $i => $command) {
-                $results[] = $command->parseResponses(array($responses[$i]));
-            }
-
-            $this->_reset();
+        foreach($this->_commands as $command) {
+            $command->execute();
         }
+
+        $exec = new Rediska_Connection_Exec($this->_connection, 'EXEC');
+        $responses = $exec->execute();
+
+        $this->_rediska->getProfiler()->stop();
+
+        if (!$responses) {
+            throw new Rediska_Transaction_AbortedException('Transaction has been aborted by server');
+        }
+
+        foreach($this->_commands as $i => $command) {
+            $results[] = $command->parseResponses(array($responses[$i]));
+        }
+
+        $this->_reset();
 
         return $results;
     }

@@ -4,7 +4,7 @@
  * @author Ivan Shumkov
  * @package Rediska
  * @subpackage Key distributor
- * @version @package_version@
+ * @version 0.5.5
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
