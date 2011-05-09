@@ -64,7 +64,8 @@ class Session_Redis extends Session
 
     protected function _read($id = NULL)
     {
-        return $this->_rediska->get($this->id($id));
+        $data = $this->_rediska->get($this->id($id));
+        return (string)$data;
     }
 
     protected function _regenerate()
@@ -75,7 +76,7 @@ class Session_Redis extends Session
 
     protected function _write()
     {
-        return $this->_rediska->setAndExpire($this->id(), $this->_data, $this->_lifetime);
+        return $this->_rediska->setAndExpire($this->id(), (string)$this, $this->_lifetime);
     }
 
     protected function _destroy()
