@@ -7,12 +7,7 @@ class Session_Redis extends Session
     /**
      * Cookie session key name
      */
-    const COOKIE_SESS_NAME = 'SID';
-
-    /**
-     * Default session lifetime in seconds
-     */
-    const DEFAULT_LIFETIME = 3600;
+    protected $_cookie_name = 'SID';
 
     /**
      * Session id
@@ -33,12 +28,15 @@ class Session_Redis extends Session
      */
     public function __construct(array $config = NULL, $id = NULL)
     {  
+        // Check for the Rediska module
+        if ( ! class_exists('Rediska')) 
+        {
+            throw new Kohana_Exception('Rediska module not loaded');
+        }
         $instance = Arr::get($config, 'instance', Rediska::DEFAULT_NAME);
+        $this->_cookie_name = Arr::get($config, 'cookie_name', $this->_cookie_name);
         $this->_rediska = Rediska_Manager::get($instance);
         parent::__construct($config, $id);
-        if (!$this->_lifetime) {
-            $this->_lifetime = self::DEFAULT_LIFETIME;
-        }
     }
 
     /**
@@ -46,17 +44,20 @@ class Session_Redis extends Session
      * @param string $id
      * @return string
      */
-    public function id($id = null)
+    public function id($id = NULL)
     {
-        if ($id !== null) {
+        if ($id !== NULL) 
+        {
             return $id;
         }
-        if (!$this->_id) {
-            $this->_id = Cookie::get(self::COOKIE_SESS_NAME);
-            if (!$this->_id) {
+        if ( ! $this->_id) 
+        {
+            $this->_id = Cookie::get($this->_cookie_name);
+            if ( ! $this->_id) 
+            {
                 $this->_regenerate();
             }
-            Cookie::set(self::COOKIE_SESS_NAME, $this->_id, $this->_lifetime);
+            Cookie::set($this->_cookie_name, $this->_id, $this->_lifetime);
         }
 
         return $this->_id;
@@ -81,7 +82,7 @@ class Session_Redis extends Session
 
     protected function _destroy()
     {
-        Cookie::delete(self::COOKIE_SESS_NAME);
+        Cookie::delete($this->_cookie_name);
         return $this->_rediska->delete($this->id());
     }
 

@@ -9,8 +9,8 @@
  *     return array(
  *          'default'   => array(                      // Default group
  *                      'driver'         => 'redis',   // Using Redis driver
- *                      'default_expire' => 3600,      // Default expire
- *                      'instance'       => 'cache'    // Instance name of Rediska (must be created)
+ *                      'instance'       => 'cache',   // Instance name of Rediska (must be created)
+ *                      'cookie_name'    => 'session'  // Optional. Name of cookie key for session id
  *           ),
  *     )
  *
@@ -30,9 +30,11 @@ class Cache_Redis extends Cache {
      * @param   array     configuration
      * @throws  Kohana_Cache_Exception
      */
-    public function __construct(array $config) {
+    public function __construct(array $config) 
+    {
         // Check for the Rediska module
-        if (!class_exists('Rediska')) {
+        if ( ! class_exists('Rediska')) 
+        {
             throw new Kohana_Cache_Exception('Rediska module not loaded');
         }
 
@@ -49,12 +51,16 @@ class Cache_Redis extends Cache {
      * @return  mixed
      * @throws  Kohana_Cache_Exception
      */
-    public function get($id, $default = NULL) {
+    public function get($id, $default = NULL) 
+    {
         $key = $this->_sanitize_id($id);
         
-        if (!$this->_rediska->exists($key)) {
+        if (!$this->_rediska->exists($key)) 
+        {
             $value = $default;
-        } else {
+        } 
+        else 
+        {
             $value = $this->_rediska->get($key);
         }
 
@@ -69,7 +75,8 @@ class Cache_Redis extends Cache {
      * @param   integer  lifetime in seconds
      * @return  boolean
      */
-    public function set($id, $data, $lifetime = 3600) {
+    public function set($id, $data, $lifetime = 3600) 
+    {
         $key = $this->_sanitize_id($id);
         $this->_rediska->setAndExpire($key, $data, $lifetime);
     }
@@ -82,9 +89,12 @@ class Cache_Redis extends Cache {
      */
     public function delete($id, $timeout = 0) {
         $key = $this->_sanitize_id($id);
-        if ($timeout == 0) {
+        if ($timeout == 0) 
+        {
             $this->_rediska->delete($key);
-        } else {
+        } 
+        else 
+        {
             $this->_rediska->setAndExpire($key, $this->get($id), $timeout);
         }
         return true;
@@ -94,7 +104,8 @@ class Cache_Redis extends Cache {
      * Delete all cache entries.
      * @return  boolean
      */
-    public function delete_all() {
+    public function delete_all() 
+    {
         return $this->_rediska->flushDb();
     }
 
