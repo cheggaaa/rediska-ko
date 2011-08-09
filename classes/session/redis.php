@@ -79,6 +79,12 @@ class Session_Redis extends Session
     {
         return $this->_rediska->setAndExpire($this->id(), (string)$this, $this->_lifetime);
     }
+    
+        
+    protected function _restart()
+    {
+        return TRUE;
+    }
 
     protected function _destroy()
     {
