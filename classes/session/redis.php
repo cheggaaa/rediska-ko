@@ -66,6 +66,10 @@ class Session_Redis extends Session
     protected function _read($id = NULL)
     {
         $this->_data = $this->_rediska->get($this->id($id));
+        if ( ! is_array($this->_data))
+        {
+            $this->_data = array();
+        }
         return NULL;
     }
 
