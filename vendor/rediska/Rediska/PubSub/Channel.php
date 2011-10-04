@@ -9,7 +9,7 @@ require_once dirname(__FILE__) . '/../../Rediska.php';
  * @author Ivan Shumkov
  * @package Rediska
  * @subpackage PublishSubscribe
- * @version 0.5.5
+ * @version 0.5.6
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
@@ -540,7 +540,9 @@ class Rediska_PubSub_Channel extends Rediska_Options_RediskaInstance implements 
                 return new Rediska_PubSub_Response_Unsubscribe($connection, $channel);
 
             case self::MESSAGE:
-                return new Rediska_PubSub_Response_Message($connection, $channel, $body);
+                $message = $this->getRediska()->getSerializer()->unserialize($body);
+
+                return new Rediska_PubSub_Response_Message($connection, $channel, $message);
 
             default:
                 throw new Rediska_PubSub_Response_Exception('Unknown reponse type: ' . $type);
