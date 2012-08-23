@@ -78,7 +78,7 @@ class Kohana_Cache_Redis extends Cache {
     public function set($id, $data, $lifetime = 3600) 
     {
         $key = $this->_sanitize_id($id);
-        $this->_rediska->setAndExpire($key, $data, $lifetime);
+        return $this->_rediska->setAndExpire($key, $data, $lifetime);
     }
 
     /**
