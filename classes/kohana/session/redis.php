@@ -48,7 +48,8 @@ class Kohana_Session_Redis extends Session
     {
         if ($id !== NULL) 
         {
-            return $id;
+            $this->_id = $id;
+            Cookie::set($this->_cookie_name, $this->_id, $this->_lifetime);
         }
         if ( ! $this->_id) 
         {
@@ -59,13 +60,16 @@ class Kohana_Session_Redis extends Session
             }
             Cookie::set($this->_cookie_name, $this->_id, $this->_lifetime);
         }
-
         return $this->_id;
     }
 
     protected function _read($id = NULL)
     {
-        $this->_data = $this->_rediska->get($this->id($id));
+        if ($id)
+        {
+            $this->id($id);
+        }
+        $this->_data = $this->_rediska->get($this->id());
         if ( ! is_array($this->_data))
         {
             $this->_data = array();
@@ -75,7 +79,7 @@ class Kohana_Session_Redis extends Session
 
     protected function _regenerate()
     {
-        $this->_id = uniqid();
+        $this->_id = uniqid() . text::random(NULL, 4);
         return $this->_id;
     }
 
