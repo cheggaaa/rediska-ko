@@ -6,7 +6,7 @@
  * @author Ivan Shumkov
  * @package Rediska
  * @subpackage Commands
- * @version 0.5.6
+ * @version 0.5.7
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
@@ -28,16 +28,21 @@ class Rediska_Command_GetFromSortedSetByScore extends Rediska_Command_Abstract
      * @param boolean[optional] $withScores Get with scores. For default is false
      * @param integer[optional] $limit      Limit. For default is no limit
      * @param integer[optional] $offset     Offset. For default is no offset
+     * @param boolean[optional] $revert     Revert. For default is false
      * @return Rediska_Connection_Exec
      */
-    public function create($key, $min, $max, $withScores = false, $limit = null, $offset = null)
+    public function create($key, $min, $max, $withScores = false, $limit = null, $offset = null, $revert = false)
     {
+        if ($revert) {
+            $this->_throwExceptionIfNotSupported('2.1.6');
+        }
+        
         $connection = $this->_rediska->getConnectionByKeyName($key);
 
-        $command = array('ZRANGEBYSCORE',
+        $command = array($revert ? 'ZREVRANGEBYSCORE' : 'ZRANGEBYSCORE',
                          $this->_rediska->getOption('namespace') . $key,
-                         $min,
-                         $max);
+                         $revert ? $max : $min,
+                         $revert ? $min : $max);
 
         if (!is_null($limit)) {
             if (is_null($offset)) {

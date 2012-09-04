@@ -5,12 +5,22 @@
  * 
  * @author Ivan Shumkov
  * @package Rediska
- * @version 0.5.6
+ * @version 0.5.7
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
 class Rediska_Transaction
 {
+
+    /**
+     * @var string
+     */
+    const TRANSACTION_PREAMBLE = 'Transaction: ';
+
+    /**
+     * @var string
+     */
+    const TRANSACTION_EMPTY = 'Empty transaction';
     /**
      * Rediska instance
      * 
@@ -228,9 +238,9 @@ class Rediska_Transaction
     public function  __toString()
     {
         if (empty($this->_commands)) {
-            return 'Empty transaction';
+            return self::TRANSACTION_EMPTY;
         } else {
-            return 'Transaction: ' . implode(', ', $this->_commands);
+            return self::TRANSACTION_PREAMBLE . implode(', ', $this->_commands);
         }
     }
 
@@ -437,16 +447,6 @@ class Rediska_Transaction
      * @return Rediska_Transaction
      */
     public function getRange($key, $start, $end = -1) { $args = func_get_args(); return $this->_addCommand('getRange', $args); }
-
-    /**
-     * Return a subset of the string from offset start to offset end (both offsets are inclusive)
-     *
-     * @param string            $key   Key name
-     * @param integer           $start Start
-     * @param integer[optional] $end   End. If end is omitted, the substring starting from $start until the end of the string will be returned. For default end of string
-     * @return Rediska_Transaction
-     */
-    public function substring($key, $start, $end = -1) { $args = func_get_args(); return $this->_addCommand('substring', $args); }
 
     /**
      * Returns the bit value at offset in the string value stored at key
@@ -754,9 +754,10 @@ class Rediska_Transaction
      * @param boolean[optional] $withScores Get with scores. For default is false
      * @param integer[optional] $limit      Limit. For default is no limit
      * @param integer[optional] $offset     Offset. For default is no offset
+     * @param boolean[optional] $revert     Revert. For default is false
      * @return Rediska_Transaction
      */
-    public function getFromSortedSetByScore($key, $min, $max, $withScores = false, $limit = null, $offset = null) { $args = func_get_args(); return $this->_addCommand('getFromSortedSetByScore', $args); }
+    public function getFromSortedSetByScore($key, $min, $max, $withScores = false, $limit = null, $offset = null, $revert = false) { $args = func_get_args(); return $this->_addCommand('getFromSortedSetByScore', $args); }
 
     /**
      * Get length of Sorted Set
@@ -991,6 +992,14 @@ class Rediska_Transaction
      * @return Rediska_Transaction
      */
     public function info() { $args = func_get_args(); return $this->_addCommand('info', $args); }
+
+    /**
+     * This command is often used to test if a connection is still alive, or to
+     * measure latency.
+     *
+     * @return Rediska_Transaction
+     */
+    public function ping() { $args = func_get_args(); return $this->_addCommand('ping', $args); }
 
     /**
      * Change the replication settings of a slave on the fly

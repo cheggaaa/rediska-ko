@@ -6,21 +6,21 @@
  * @author Ivan Shumkov
  * @package Rediska
  * @subpackage Connection
- * @version 0.5.6
+ * @version 0.5.7
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
 class Rediska_Connection extends Rediska_Options
 {
-    const DEFAULT_HOST   = '127.0.0.1';
-    const DEFAULT_PORT   = 6379;
+    const DEFAULT_HOST = '127.0.0.1';
+    const DEFAULT_PORT = 6379;
     const DEFAULT_WEIGHT = 1;
-    const DEFAULT_DB     = 0;
+    const DEFAULT_DB = 0;
 
     /**
      * Socket
      * 
-     * @var stream
+     * @var resource
      */
     protected $_socket;
 
@@ -41,25 +41,27 @@ class Rediska_Connection extends Rediska_Options
      * @var array
      */
     protected $_options = array(
-        'host'         => self::DEFAULT_HOST,
-        'port'         => self::DEFAULT_PORT,
-        'db'           => self::DEFAULT_DB,
-        'alias'        => null,
-        'weight'       => self::DEFAULT_WEIGHT,
-        'password'     => null,
-        'persistent'   => false,
-        'timeout'      => null,
-        'readTimeout'  => null,
+        'host' => self::DEFAULT_HOST,
+        'port' => self::DEFAULT_PORT,
+        'db' => self::DEFAULT_DB,
+        'alias' => null,
+        'weight' => self::DEFAULT_WEIGHT,
+        'password' => null,
+        'persistent' => false,
+        'timeout' => null,
+        'readTimeout' => null,
         'blockingMode' => true,
+        'streamContext' => null
     );
 
     /**
      * Connect to redis server
-     * 
+     *
      * @throws Rediska_Connection_Exception
      * @return boolean
+     * @uses   self::getStreamContext()
      */
-    public function connect() 
+    public function connect()
     {
         if (!$this->isConnected()) {
             $socketAddress = 'tcp://' . $this->getHost() . ':' . $this->getPort();
@@ -70,7 +72,21 @@ class Rediska_Connection extends Rediska_Options
                 $flag = STREAM_CLIENT_CONNECT;
             }
 
-            $this->_socket = @stream_socket_client($socketAddress, $errno, $errmsg, $this->getTimeout(), $flag);
+            $socketParams = array(
+                $socketAddress,
+                &$errno,
+                &$errmsg,
+                $this->getTimeout(),
+                $flag
+            );
+
+            $streamContext = $this->getStreamContext();
+
+            if ($streamContext) {
+                $socketParams[] = $streamContext;
+            }
+
+            $this->_socket = call_user_func_array('stream_socket_client', $socketParams);
 
             // Throw exception if can't connect
             if (!is_resource($this->_socket)) {
@@ -98,7 +114,7 @@ class Rediska_Connection extends Rediska_Options
             if ($this->getPassword() != '') {
                 $auth = new Rediska_Connection_Exec($this, "AUTH {$this->getPassword()}");
                 try {
-                   $auth->execute();
+                    $auth->execute();
                 } catch (Rediska_Command_Exception $e) {
                     throw new Rediska_Connection_Exception("Password error: {$e->getMessage()}");
                 }
@@ -108,7 +124,7 @@ class Rediska_Connection extends Rediska_Options
             if ($this->_options['db'] !== self::DEFAULT_DB) {
                 $selectDb = new Rediska_Connection_Exec($this, "SELECT {$this->_options['db']}");
                 try {
-                   $selectDb->execute();
+                    $selectDb->execute();
                 } catch (Rediska_Command_Exception $e) {
                     throw new Rediska_Connection_Exception("Select db error: {$e->getMessage()}");
                 }
@@ -125,7 +141,7 @@ class Rediska_Connection extends Rediska_Options
      * 
      * @return boolean
      */
-    public function disconnect() 
+    public function disconnect()
     {
         if ($this->isConnected()) {
             @fclose($this->_socket);
@@ -152,26 +168,26 @@ class Rediska_Connection extends Rediska_Options
      * @param $string
      * @return boolean
      */
-    public function write($string) 
+    public function write($string)
     {
         if ($string !== '') {
-            $string = (string)$string . Rediska::EOL;
+            $needToWrite = (string) $string . Rediska::EOL;
 
             $this->connect();
 
-            while ($string) {
-                $bytes = @fwrite($this->_socket, $string);
-    
+            while ($needToWrite) {
+                $bytes = @fwrite($this->_socket, $needToWrite);
+
                 if ($bytes === false) {
                     $this->disconnect();
                     throw new Rediska_Connection_Exception("Can't write to socket.");
                 }
-    
+
                 if ($bytes == 0) {
                     return true;
                 }
-    
-                $string = substr($string, $bytes);
+
+                $needToWrite = substr($needToWrite, $bytes);
             }
 
             return true;
@@ -227,6 +243,7 @@ class Rediska_Connection extends Rediska_Options
         }
 
         if ($reply === false) {
+
             if ($this->_options['blockingMode'] || (!$this->_options['blockingMode'] && $info['eof'])) {
                 $this->disconnect();
                 throw new Rediska_Connection_Exception("Can't read from socket.");
@@ -343,6 +360,28 @@ class Rediska_Connection extends Rediska_Options
         } else {
             return $this->_options['host'] . ':' . $this->_options['port'];
         }
+    }
+
+    /**
+     * If a stream context is provided, use it creating the socket.
+     *
+     * It's supported to provide either an array with options, or an already created
+     * resource.
+     *
+     * @return mixed null or resource
+     * @see    self::connect()
+     */
+    public function getStreamContext()
+    {
+        if ($this->_options['streamContext'] !== null) {
+            if (is_resource($this->_options['streamContext'])) {
+                return $this->_options['streamContext'];
+            }
+            if (is_array($this->_options['streamContext'])) {
+                return stream_context_create($this->_options['streamContext']);
+            }
+        }
+        return null;
     }
 
     /**

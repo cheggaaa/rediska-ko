@@ -6,7 +6,7 @@
  * @author Ivan Shumkov
  * @package Rediska
  * @subpackage Commands
- * @version 0.5.6
+ * @version 0.5.7
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
@@ -45,7 +45,6 @@ class Rediska_Commands
         'decrement'    => 'Rediska_Command_Decrement',
         'setrange'     => 'Rediska_Command_SetRange',
         'getrange'     => 'Rediska_Command_GetRange',
-        'substring'    => 'Rediska_Command_GetRange',
         'setbit'       => 'Rediska_Command_SetBit',
         'getbit'       => 'Rediska_Command_GetBit',
         'getlength'    => 'Rediska_Command_GetLength',
@@ -119,6 +118,7 @@ class Rediska_Commands
 
         // Remote server control commands
         'info'    => 'Rediska_Command_Info',
+        'ping'    => 'Rediska_Command_Ping',
         'slaveof' => 'Rediska_Command_SlaveOf'
     );
 

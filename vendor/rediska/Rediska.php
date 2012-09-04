@@ -10,7 +10,7 @@ Rediska_Autoloader::register();
  * 
  * @author Ivan Shumkov
  * @package Rediska
- * @version 0.5.6
+ * @version 0.5.7
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
@@ -236,7 +236,16 @@ class Rediska extends Rediska_Options
         $options['host'] = $host;
         $options['port'] = $port;
 
-        $this->_connections[$connectionString] = new Rediska_Connection($options);
+        if (isset($options['useSocket'])) {
+            if ($options['useSocket'] == true) {
+                $connectionClass = 'Rediska_Connection_Socket';
+            }
+            unset($options['useSocket']);
+        } else {
+            $connectionClass = 'Rediska_Connection';
+        }
+
+        $this->_connections[$connectionString] = new $connectionClass($options);
 
         if ($this->_keyDistributor) {
             $this->_keyDistributor->addConnection(
@@ -525,6 +534,12 @@ class Rediska extends Rediska_Options
     public function getProfiler()
     {
         if (!$this->_profiler) {
+            if (is_string($this->_options['profiler'])) {
+                $this->_options['profiler'] = array(
+                    'name' => $this->_options['profiler']
+                );
+            }
+
             if ($this->_options['profiler'] === false) {
                 $this->_profiler = new Rediska_Profiler_Null();
             } else if ($this->_options['profiler'] === true) {
@@ -535,12 +550,14 @@ class Rediska extends Rediska_Options
                 } else if (in_array($this->_options['profiler']['name'], array('stream'))) {
                     $name = ucfirst($this->_options['profiler']['name']);
                     $className = "Rediska_Profiler_$name";
-                    unset($this->_options['profiler']['name']);
-                    $this->_profiler = new $className($this->_options['profiler']);
+                    $options = $this->_options['profiler'];
+                    unset($options['name']);
+                    $this->_profiler = new $className($options);
                 } else if (@class_exists($this->_options['profiler']['name'])) {
                     $className = $this->_options['profiler']['name'];
-                    unset($this->_options['profiler']['name']);
-                    $this->_profiler = new $className($this->_options['profiler']);
+                    $options = $this->_options['profiler'];
+                    unset($options['name']);
+                    $this->_profiler = new $className($options);
                 } else {
                     throw new Rediska_Exception("Profiler '{$this->_options['profiler']['name']}' not found. You need include it before or setup autoload.");
                 }
@@ -860,16 +877,6 @@ class Rediska extends Rediska_Options
     public function getRange($key, $start, $end = -1) { $args = func_get_args(); return $this->_executeCommand('getRange', $args); }
 
     /**
-     * Return a subset of the string from offset start to offset end (both offsets are inclusive)
-     *
-     * @param string            $key   Key name
-     * @param integer           $start Start
-     * @param integer[optional] $end   End. If end is omitted, the substring starting from $start until the end of the string will be returned. For default end of string
-     * @return mixin
-     */
-    public function substring($key, $start, $end = -1) { $args = func_get_args(); return $this->_executeCommand('substring', $args); }
-
-    /**
      * Returns the bit value at offset in the string value stored at key
      *
      * @param string  $key    Key name
@@ -1175,9 +1182,10 @@ class Rediska extends Rediska_Options
      * @param boolean[optional] $withScores Get with scores. For default is false
      * @param integer[optional] $limit      Limit. For default is no limit
      * @param integer[optional] $offset     Offset. For default is no offset
+     * @param boolean[optional] $revert     Revert. For default is false
      * @return array
      */
-    public function getFromSortedSetByScore($key, $min, $max, $withScores = false, $limit = null, $offset = null) { $args = func_get_args(); return $this->_executeCommand('getFromSortedSetByScore', $args); }
+    public function getFromSortedSetByScore($key, $min, $max, $withScores = false, $limit = null, $offset = null, $revert = false) { $args = func_get_args(); return $this->_executeCommand('getFromSortedSetByScore', $args); }
 
     /**
      * Get length of Sorted Set
@@ -1412,6 +1420,14 @@ class Rediska extends Rediska_Options
      * @return mixed
      */
     public function info() { $args = func_get_args(); return $this->_executeCommand('info', $args); }
+
+    /**
+     * This command is often used to test if a connection is still alive, or to
+     * measure latency.
+     *
+     * @return mixed
+     */
+    public function ping() { $args = func_get_args(); return $this->_executeCommand('ping', $args); }
 
     /**
      * Change the replication settings of a slave on the fly

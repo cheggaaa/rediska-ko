@@ -6,7 +6,7 @@
  * @author Ivan Shumkov
  * @package Rediska
  * @subpackage Serializer
- * @version 0.5.6
+ * @version 0.5.7
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
@@ -99,7 +99,7 @@ class Rediska_Serializer
                 $unserializedValue = (float)$value;
             }
 
-            if ((string)$unserializedValue != $value) {
+            if ((string)$unserializedValue !== $value) {
                 $unserializedValue = $value;
             }
         } else {

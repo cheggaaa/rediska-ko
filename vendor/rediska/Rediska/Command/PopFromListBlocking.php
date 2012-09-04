@@ -6,7 +6,7 @@
  * @author Ivan Shumkov
  * @package Rediska
  * @subpackage Commands
- * @version 0.5.6
+ * @version 0.5.7
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
@@ -53,7 +53,8 @@ class Rediska_Command_PopFromListBlocking extends Rediska_Command_Abstract
                 $this->setAtomic(false);
 
                 $command = array('BRPOP',
-                                 $this->getRediska()->getOption('namespace') . $key);
+                                 $this->getRediska()->getOption('namespace') . $key,
+                                 $timeout);
             } else {
                 $this->_throwExceptionIfNotSupported('2.1.7');
 

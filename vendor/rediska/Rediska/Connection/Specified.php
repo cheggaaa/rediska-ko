@@ -6,7 +6,7 @@
  * @author Ivan Shumkov
  * @package Rediska
  * @subpackage Connection
- * @version 0.5.6
+ * @version 0.5.7
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
@@ -297,16 +297,6 @@ class Rediska_Connection_Specified
      * @return mixin
      */
     public function getRange($key, $start, $end = -1) { $args = func_get_args(); return $this->_executeCommand('getRange', $args); }
-
-    /**
-     * Return a subset of the string from offset start to offset end (both offsets are inclusive)
-     *
-     * @param string            $key   Key name
-     * @param integer           $start Start
-     * @param integer[optional] $end   End. If end is omitted, the substring starting from $start until the end of the string will be returned. For default end of string
-     * @return mixin
-     */
-    public function substring($key, $start, $end = -1) { $args = func_get_args(); return $this->_executeCommand('substring', $args); }
 
     /**
      * Returns the bit value at offset in the string value stored at key
@@ -614,9 +604,10 @@ class Rediska_Connection_Specified
      * @param boolean[optional] $withScores Get with scores. For default is false
      * @param integer[optional] $limit      Limit. For default is no limit
      * @param integer[optional] $offset     Offset. For default is no offset
+     * @param boolean[optional] $revert     Revert. For default is false
      * @return array
      */
-    public function getFromSortedSetByScore($key, $min, $max, $withScores = false, $limit = null, $offset = null) { $args = func_get_args(); return $this->_executeCommand('getFromSortedSetByScore', $args); }
+    public function getFromSortedSetByScore($key, $min, $max, $withScores = false, $limit = null, $offset = null, $revert = false) { $args = func_get_args(); return $this->_executeCommand('getFromSortedSetByScore', $args); }
 
     /**
      * Get length of Sorted Set
@@ -851,6 +842,14 @@ class Rediska_Connection_Specified
      * @return mixed
      */
     public function info() { $args = func_get_args(); return $this->_executeCommand('info', $args); }
+
+    /**
+     * This command is often used to test if a connection is still alive, or to
+     * measure latency.
+     *
+     * @return mixed
+     */
+    public function ping() { $args = func_get_args(); return $this->_executeCommand('ping', $args); }
 
     /**
      * Change the replication settings of a slave on the fly
