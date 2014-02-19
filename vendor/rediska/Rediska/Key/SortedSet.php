@@ -9,7 +9,7 @@ require_once dirname(__FILE__) . '/../../Rediska.php';
  * @author Ivan Shumkov
  * @package Rediska
  * @subpackage Key objects
- * @version 0.5.7
+ * @version 0.5.9
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */

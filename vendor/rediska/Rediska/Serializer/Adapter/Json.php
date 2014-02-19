@@ -6,7 +6,7 @@
  * @author Ivan Shumkov
  * @package Rediska
  * @subpackage Serializer
- * @version 0.5.7
+ * @version 0.5.9
  * @link http://rediska.geometria-lab.net
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
@@ -93,6 +93,6 @@ class Rediska_Serializer_Adapter_Json extends Rediska_Options implements Rediska
             throw new Rediska_Serializer_Adapter_Exception("Can't unserialize value");
         }
 
-        return $value;
+        return $decodedValue;
     }
 }
