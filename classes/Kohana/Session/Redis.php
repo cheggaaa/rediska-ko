@@ -79,13 +79,20 @@ class Kohana_Session_Redis extends Session
 
     protected function _regenerate()
     {
-        $this->_id = uniqid() . text::random(NULL, 4);
+        $this->_id = uniqid() . Text::random(NULL, 4);
         return $this->_id;
     }
 
     protected function _write()
     {
-        return $this->_rediska->setAndExpire($this->id(), $this->_data, $this->_lifetime);
+        if ($this->_lifetime > 0)
+        {
+            return $this->_rediska->setAndExpire($this->id(), $this->_data, $this->_lifetime);
+        }
+        else
+        {
+            return $this->_rediska->set($this->id(), $this->_data);
+        }
     }
     
         

@@ -91,7 +91,14 @@ class Kohana_Cache_Redis extends Cache {
         $key = $this->_sanitize_id($id);
         if ($timeout == 0) 
         {
-            $this->_rediska->delete($key);
+            if (mb_substr($key, -2) == ":*")
+            {
+                $key = $this->_rediska->getKeysByPattern($key);
+            }
+            if ($key)
+            {
+                $this->_rediska->delete($key);
+            }
         } 
         else 
         {
