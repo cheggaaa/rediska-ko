@@ -1,9 +1,10 @@
-Rediska (http://rediska.geometria-lab.net) module for Kohana php framework (http://kohanaphp.com)
+Rediska (http://rediska.geometria-lab.net) module for Kohana php framework (http://kohanaframework.org/)
 
+For support kohana 3.0 -3.2 in v3.2 banch
 
 1. Installation
 
-git submodule add git://github.com/cheggaaa/rediska-ko.git modules/rediska
+git submodule add https://github.com/cheggaaa/rediska-ko.git modules/rediska
 if you don't use git - move source to modules/rediska
 
 2. Create config
