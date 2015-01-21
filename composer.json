@@ -1,0 +1,32 @@
+{
+    "name": "cheggaaa/rediska-ko",
+    "version": "3.3",
+    "type": "kohana-module",
+    "description": "Rediska (http://rediska.geometria-lab.net) module for Kohana php framework",
+    "type": "kohana-module",
+    "authors": [
+        {
+            "name": "cheggaaa",
+            "email": "cheggaaa@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3",
+        "composer/installers": "1.*",
+        "geometria-lab/rediska-without-zend-requires": ">=0.5.9"
+    },
+    "minimum-stability": "stable",
+    "autoload": {
+        "classmap": [
+            "classes/"
+        ]
+    },
+    "extra": {
+        "installer-paths": {
+            "vendor/kohana/modules/{$name}/": [
+                "type:kohana-module"
+            ]
+        }
+    }
+}
